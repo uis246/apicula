@@ -1,4 +1,4 @@
-# These constants are used to interact with the 'logicinfo', 'shortval' and maybe 'longval' tables
+# These constants are used to interact with the 'logicinfo', 'shortval' and 'longval' tables
 # * - it seems that these attributes must always be present (XXX)
 # Warning:
 # - the names assigned to constants are not exact correspondence with the primitive parameter names
@@ -166,7 +166,7 @@ iob_attrvals = {
             '16':               100,
             '20':               101,
             '24':               102,
-            # XXX ?
+            # Ohms?
             '80':               103,
             '100':              104,
             '120':              105,
