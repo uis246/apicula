@@ -38,16 +38,17 @@ Related to tristate control, shown on figure 4-1.
 Maybe controls if Output Enable is inverted? Or maybe it is used internally to flag when TO is actually used because I cannot find it in logicinfo for GW1NSR-4C
 I have no clue.
 - `TRI_MUX`
-Valid values: `"0"`, `TSREG`, `TMDDR`, something else
+Valid values: `"0"`, `TSREG`, `TMDDR`, `SIG`, `"1"`
 This lines up with OTMUX.
-`"0"` for GND, `TSREG` for TRIGREG, `TMDDR` for OSER.
-Forth option should be for TX input directly.
+`"0"` for GND, `TSREG` for TRIGREG, `TMDDR` for OSER, `SIG` for direct input signal.
 - `TRIMUX_PADDT`
-Valid values: `"0"`, `INV`
-???
+Valid values: `"0"`(???), `INV`, `SIG`, possibly something else
 - `TLVDS_OUT`
 Valid values: `ON`, lack of
 Whether this pin has TLVDS output, set `ON` only for one pin in pair, other one doesn't have this enabled.
+
+## IOLogic
+- `CLKIMUX_CLK`
 
 ## OSC
 
