@@ -65,6 +65,9 @@ Valid values: `SIG`, `INV`
 Valid values: `ENABLE`, something else
 - `SRMODE`
 Valid values: `LSR_OVER_CE`, some else
+- `CEOMUX_1`
+Valid values: `"1"`. ???
+Maybe it is sort of "always enable"
 
 ## OSC
 
