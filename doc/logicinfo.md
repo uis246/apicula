@@ -41,6 +41,7 @@ I have no clue.
 Valid values: `"0"`, `TSREG`, `TMDDR`, `SIG`, `"1"`
 This lines up with OTMUX.
 `"0"` for GND, `TSREG` for TRIGREG, `TMDDR` for OSER, `SIG` for direct input signal.
+Not sure what `"1"` is doing here.
 - `TRIMUX_PADDT`
 Valid values: `"0"`(???), `INV`, `SIG`, possibly something else
 - `TLVDS_OUT`
@@ -48,7 +49,22 @@ Valid values: `ON`, lack of
 Whether this pin has TLVDS output, set `ON` only for one pin in pair, other one doesn't have this enabled.
 
 ## IOLogic
-- `CLKIMUX_CLK`
+- `OUTMODE`
+Valid values: `OREG`, multuple else
+- `OREG_OUTREGMODE`
+Valid values: `FF`, `LATCH`
+`FF` for flip-flop and `LATCH` for latch.
+- `CLKOMUX_CLK`
+Valid values: `SIG`, `INV`
+When value is `SIG` FF is set on rising edge of signal, `INV` - on falling edge.
+- `OREG_RESET`
+Valid values: `SET`. `RESET`
+- `CEMUX_CE`
+Valid values: `SIG`, `INV`
+- `GSR`
+Valid values: `ENABLE`, something else
+- `SRMODE`
+Valid values: `LSR_OVER_CE`, some else
 
 ## OSC
 
