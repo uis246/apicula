@@ -125,8 +125,20 @@ _dff_types = {
    ('SET',   '',       'SIG', '') :      'DFFS',
    ('SET',   '',       'INV', '') :      'DFFNS',
 }
+_latch_types = {
+   ('RESET', 'LSRMUX', 'SIG', '') :      'DL',
+   ('RESET', 'LSRMUX', 'INV', '') :      'DLN',
+   ('RESET', '',       'SIG', 'ASYNC') : 'DLC',
+   ('RESET', '',       'INV', 'ASYNC') : 'DLNC',
+   ('RESET', '',       'SIG', '') :      'DLR',
+   ('RESET', '',       'INV', '') :      'DLNR',
+   ('SET',   '',       'SIG', 'ASYNC') : 'DLP',
+   ('SET',   '',       'INV', 'ASYNC') : 'DLNP',
+   ('SET',   '',       'SIG', '') :      'DLS',
+   ('SET',   '',       'INV', '') :      'DLNS',
+}
 
-def get_dff_type(dff_idx, in_attrs):
+def get_dff_type(dff_idx, in_attrs, typ):
     def get_attrval_name(val):
         for nam, vl in cls_attrvals.items():
             if vl == val:
@@ -151,7 +163,7 @@ def get_dff_type(dff_idx, in_attrs):
     else:
         attrs['REGSET'] = 'RESET'
 
-    return _dff_types.get((attrs['REGSET'], attrs['LSRONMUX'], attrs['CLKMUX_CLK'], attrs['SRMODE']))
+    return typ.get((attrs['REGSET'], attrs['LSRONMUX'], attrs['CLKMUX_CLK'], attrs['SRMODE']))
 
 # parse attributes and values use 'logicinfo' table
 # returns {attr: value}
@@ -248,11 +260,14 @@ def parse_tile_(db, row, col, tile, default=True, noalias=False, noiostd = True)
             idx = int(name[3])
             attrvals = parse_attrvals(tile, db.logicinfo['SLICE'], db.shortval[tiledata.ttyp][f'CLS{idx // 2}'], cls_attrids)
             # skip ALU and unsupported modes
-            if attrvals.get('REGMODE') == cls_attrvals['LATCH'] or attrvals.get('MODE') == cls_attrvals['SSRAM']:
-                continue
-            dff_type = get_dff_type(idx, attrvals)
-            if dff_type:
-                bels[f'{name}'] = {dff_type}
+            if attrvals.get('REGMODE') == cls_attrvals['LATCH']:
+                latch_type = get_dff_type(idx, attrvals, _latch_types)
+                if latch_type:
+                     bels[f'{name}'] = {latch_type}
+            elif  attrvals.get('REGMODE') == cls_attrvals['FF']:
+                dff_type = get_dff_type(idx, attrvals, _dff_type)
+                if dff_type:
+                    bels[f'{name}'] = {dff_type}
             continue
         if name.startswith("IOB"):
             #print(name)
@@ -368,6 +383,18 @@ dffmap = {
     "DFFNR": "RESET",
     "DFFNP": "PRESET",
     "DFFNC": "CLEAR",
+}
+latchmap = {
+    "DL": None,
+    "DLN": None,
+    "DLS": "SET",
+    "DLR": "RESET",
+    "DLP": "PRESET",
+    "DLC": "CLEAR",
+    "DLNS": "SET",
+    "DLNR": "RESET",
+    "DLNP": "PRESET",
+    "DLNC": "CLEAR",
 }
 iobmap = {
     "IBUF": {"wires": ["O"], "inputs": ["I"]},
@@ -677,7 +704,10 @@ def tile2verilog(dbrow, dbcol, bels, pips, clock_pips, mod, cst, db):
             kind, = flags # DFF only have one flag
             if kind == "RAM": continue
             idx = int(idx)
-            port = dffmap[kind]
+            if kind in latchmap.keys():
+                port = latchmap[kind]
+            else:
+                port = dffmap[kind]
             name = f"R{row}C{col}_{typ}E_{idx}"
             dff = codegen.Primitive(kind+"E", name)
             dff.portmap['CLK'] = f"R{row}C{col}_CLK{idx//2}"
